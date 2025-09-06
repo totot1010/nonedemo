@@ -1,7 +1,7 @@
 version: "3"
 services:
   docker_python:
-    container_name: python
+    container_name: video_compressor
     build:
       context: .
       dockerfile: Dockerfile
