@@ -10,12 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
-import { Route as ProductsRouteImport } from './routes/products'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as BlogRouteImport } from './routes/_blog'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as ProductsRouteRouteImport } from './routes/products/route'
+import { Route as BlogRouteRouteImport } from './routes/blog/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
@@ -29,11 +29,6 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductsRoute = ProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -51,12 +46,18 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/_blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsRouteRoute = ProductsRouteRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRouteRoute = BlogRouteRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -67,12 +68,12 @@ const IndexRoute = IndexRouteImport.update({
 const ProductsIndexRoute = ProductsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ProductsRoute,
+  getParentRoute: () => ProductsRouteRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
-  id: '/blog/',
-  path: '/blog/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => BlogRouteRoute,
 } as any)
 const UsersUserIdRoute = UsersUserIdRouteImport.update({
   id: '/users/$userId',
@@ -82,12 +83,12 @@ const UsersUserIdRoute = UsersUserIdRouteImport.update({
 const ProductsCategoryRoute = ProductsCategoryRouteImport.update({
   id: '/$category',
   path: '/$category',
-  getParentRoute: () => ProductsRoute,
+  getParentRoute: () => ProductsRouteRoute,
 } as any)
 const BlogPostIdRoute = BlogPostIdRouteImport.update({
-  id: '/blog/$postId',
-  path: '/blog/$postId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => BlogRouteRoute,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
@@ -107,10 +108,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteRouteWithChildren
+  '/products': typeof ProductsRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/products': typeof ProductsRouteWithChildren
   '/search': typeof SearchRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -118,7 +120,7 @@ export interface FileRoutesByFullPath {
   '/blog/$postId': typeof BlogPostIdRoute
   '/products/$category': typeof ProductsCategoryRoute
   '/users/$userId': typeof UsersUserIdRoute
-  '/blog': typeof BlogIndexRoute
+  '/blog/': typeof BlogIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -139,12 +141,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/blog': typeof BlogRouteRouteWithChildren
+  '/products': typeof ProductsRouteRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/_blog': typeof BlogRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/products': typeof ProductsRouteWithChildren
   '/search': typeof SearchRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -159,10 +161,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/blog'
+    | '/products'
     | '/about'
     | '/contact'
     | '/login'
-    | '/products'
     | '/search'
     | '/dashboard'
     | '/settings'
@@ -170,7 +173,7 @@ export interface FileRouteTypes {
     | '/blog/$postId'
     | '/products/$category'
     | '/users/$userId'
-    | '/blog'
+    | '/blog/'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -190,12 +193,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/blog'
+    | '/products'
     | '/_authenticated'
-    | '/_blog'
     | '/about'
     | '/contact'
     | '/login'
-    | '/products'
     | '/search'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
@@ -209,17 +212,15 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlogRouteRoute: typeof BlogRouteRouteWithChildren
+  ProductsRouteRoute: typeof ProductsRouteRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  BlogRoute: typeof BlogRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
-  ProductsRoute: typeof ProductsRouteWithChildren
   SearchRoute: typeof SearchRoute
   ApiSplatRoute: typeof ApiSplatRoute
-  BlogPostIdRoute: typeof BlogPostIdRoute
   UsersUserIdRoute: typeof UsersUserIdRoute
-  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -229,13 +230,6 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/products': {
-      id: '/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -259,18 +253,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_blog': {
-      id: '/_blog'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -285,14 +286,14 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/products/'
       preLoaderRoute: typeof ProductsIndexRouteImport
-      parentRoute: typeof ProductsRoute
+      parentRoute: typeof ProductsRouteRoute
     }
     '/blog/': {
       id: '/blog/'
-      path: '/blog'
-      fullPath: '/blog'
+      path: '/'
+      fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BlogRouteRoute
     }
     '/users/$userId': {
       id: '/users/$userId'
@@ -306,14 +307,14 @@ declare module '@tanstack/react-router' {
       path: '/$category'
       fullPath: '/products/$category'
       preLoaderRoute: typeof ProductsCategoryRouteImport
-      parentRoute: typeof ProductsRoute
+      parentRoute: typeof ProductsRouteRoute
     }
     '/blog/$postId': {
       id: '/blog/$postId'
-      path: '/blog/$postId'
+      path: '/$postId'
       fullPath: '/blog/$postId'
       preLoaderRoute: typeof BlogPostIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BlogRouteRoute
     }
     '/api/$': {
       id: '/api/$'
@@ -339,6 +340,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface BlogRouteRouteChildren {
+  BlogPostIdRoute: typeof BlogPostIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+}
+
+const BlogRouteRouteChildren: BlogRouteRouteChildren = {
+  BlogPostIdRoute: BlogPostIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
+}
+
+const BlogRouteRouteWithChildren = BlogRouteRoute._addFileChildren(
+  BlogRouteRouteChildren,
+)
+
+interface ProductsRouteRouteChildren {
+  ProductsCategoryRoute: typeof ProductsCategoryRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
+}
+
+const ProductsRouteRouteChildren: ProductsRouteRouteChildren = {
+  ProductsCategoryRoute: ProductsCategoryRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
+}
+
+const ProductsRouteRouteWithChildren = ProductsRouteRoute._addFileChildren(
+  ProductsRouteRouteChildren,
+)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -353,33 +382,17 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface ProductsRouteChildren {
-  ProductsCategoryRoute: typeof ProductsCategoryRoute
-  ProductsIndexRoute: typeof ProductsIndexRoute
-}
-
-const ProductsRouteChildren: ProductsRouteChildren = {
-  ProductsCategoryRoute: ProductsCategoryRoute,
-  ProductsIndexRoute: ProductsIndexRoute,
-}
-
-const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
-  ProductsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlogRouteRoute: BlogRouteRouteWithChildren,
+  ProductsRouteRoute: ProductsRouteRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  BlogRoute: BlogRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
-  ProductsRoute: ProductsRouteWithChildren,
   SearchRoute: SearchRoute,
   ApiSplatRoute: ApiSplatRoute,
-  BlogPostIdRoute: BlogPostIdRoute,
   UsersUserIdRoute: UsersUserIdRoute,
-  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
