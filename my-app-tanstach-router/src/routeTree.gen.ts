@@ -13,8 +13,8 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as BlogRouteImport } from './routes/_blog'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
@@ -46,14 +46,13 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/_blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -71,9 +70,9 @@ const ProductsIndexRoute = ProductsIndexRouteImport.update({
   getParentRoute: () => ProductsRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BlogRoute,
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const UsersUserIdRoute = UsersUserIdRouteImport.update({
   id: '/users/$userId',
@@ -86,9 +85,9 @@ const ProductsCategoryRoute = ProductsCategoryRouteImport.update({
   getParentRoute: () => ProductsRoute,
 } as any)
 const BlogPostIdRoute = BlogPostIdRouteImport.update({
-  id: '/$postId',
-  path: '/$postId',
-  getParentRoute: () => BlogRoute,
+  id: '/blog/$postId',
+  path: '/blog/$postId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
@@ -109,7 +108,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRouteWithChildren
@@ -120,7 +118,7 @@ export interface FileRoutesByFullPath {
   '/blog/$postId': typeof BlogPostIdRoute
   '/products/$category': typeof ProductsCategoryRoute
   '/users/$userId': typeof UsersUserIdRoute
-  '/blog/': typeof BlogIndexRoute
+  '/blog': typeof BlogIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -142,8 +140,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_blog': typeof BlogRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/products': typeof ProductsRouteWithChildren
@@ -162,7 +160,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/blog'
     | '/contact'
     | '/login'
     | '/products'
@@ -173,7 +170,7 @@ export interface FileRouteTypes {
     | '/blog/$postId'
     | '/products/$category'
     | '/users/$userId'
-    | '/blog/'
+    | '/blog'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -194,8 +191,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_blog'
     | '/about'
-    | '/blog'
     | '/contact'
     | '/login'
     | '/products'
@@ -213,14 +210,16 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  BlogRoute: typeof BlogRoute
   AboutRoute: typeof AboutRoute
-  BlogRoute: typeof BlogRouteWithChildren
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
   ProductsRoute: typeof ProductsRouteWithChildren
   SearchRoute: typeof SearchRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  BlogPostIdRoute: typeof BlogPostIdRoute
   UsersUserIdRoute: typeof UsersUserIdRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -253,18 +252,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_blog': {
+      id: '/_blog'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -290,10 +289,10 @@ declare module '@tanstack/react-router' {
     }
     '/blog/': {
       id: '/blog/'
-      path: '/'
-      fullPath: '/blog/'
+      path: '/blog'
+      fullPath: '/blog'
       preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof BlogRoute
+      parentRoute: typeof rootRouteImport
     }
     '/users/$userId': {
       id: '/users/$userId'
@@ -311,10 +310,10 @@ declare module '@tanstack/react-router' {
     }
     '/blog/$postId': {
       id: '/blog/$postId'
-      path: '/$postId'
+      path: '/blog/$postId'
       fullPath: '/blog/$postId'
       preLoaderRoute: typeof BlogPostIdRouteImport
-      parentRoute: typeof BlogRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/$': {
       id: '/api/$'
@@ -354,18 +353,6 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface BlogRouteChildren {
-  BlogPostIdRoute: typeof BlogPostIdRoute
-  BlogIndexRoute: typeof BlogIndexRoute
-}
-
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogPostIdRoute: BlogPostIdRoute,
-  BlogIndexRoute: BlogIndexRoute,
-}
-
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
-
 interface ProductsRouteChildren {
   ProductsCategoryRoute: typeof ProductsCategoryRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
@@ -383,14 +370,16 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  BlogRoute: BlogRoute,
   AboutRoute: AboutRoute,
-  BlogRoute: BlogRouteWithChildren,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
   ProductsRoute: ProductsRouteWithChildren,
   SearchRoute: SearchRoute,
   ApiSplatRoute: ApiSplatRoute,
+  BlogPostIdRoute: BlogPostIdRoute,
   UsersUserIdRoute: UsersUserIdRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
